@@ -261,7 +261,7 @@ Finally, let’s explore how clients submit applications. Different endpoints ha
 ![API](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/405df8e8-ae6d-4f9a-8b39-b9182cd41b91)
 
 
-*Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
+*Disclosure: This project WAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
 
 FOR MORE INFORMATION OR HELP PLEASE CONTACT ME AT RICARDOCOLINDRES@ME.com
 
