@@ -68,7 +68,12 @@ Going forward, I will only use the administrator portal as an example. Keep in m
 ![loan](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/7322aac0-5dc7-4feb-93b1-8e8b4e880229)
 ![risk_assesmnet](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/2ebef1ae-42a0-410c-981d-c08f9ea40df0)
 
-Moving on, let's explore how I’ve designed the ML lifecycle. Since the ML model is at the core of this application, having a proper way to experiment, reproduce, deploy, and manage the models and components is paramount. Of course, there are many robust open-source platforms out there, such as ML Flow, that can accomplish all these goals. However, my objective was to completely integrate the ML lifecycle workflow into my web applications and customize it according to requirements. Moreover, this allows for very powerful integration of the model into the logic of the application. For example, delivering extra value by not just categorizing loans but also optimizing their parameters. Consequently, the application uses special queries to request data from the database and automatically trains and deploys new models. Also, Jupyter Notebooks are directly integrated into Django and tis easy-to-use ORM (Object Relational Mapper).
+Moving on, let's explore how I’ve designed the ML lifecycle. Since the ML model is at the core of this application, having a proper way to experiment, reproduce, deploy, and manage the models and components is paramount. Of course, there are many robust open-source platforms out there, such as ML Flow, that can accomplish all these goals. However, my objective was to completely integrate the ML lifecycle workflow into my web applications and customize it according to requirements. Moreover, this allows for very powerful integration of the model into the logic of the application. For example, delivering extra value by not just categorizing loans but also optimizing their parameters. 
+
+![models_admin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/6fda6f22-182e-4378-b97a-e1e3f35037de)
+![Untitled-1](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/fb31ea84-eb64-4db8-82b2-68c9e940ca30)
+
+Consequently, the application uses special queries to request data from the database and automatically trains and deploys new models. Also, Jupyter Notebooks are directly integrated into Django and tis easy-to-use ORM (Object Relational Mapper).
 ```
 # Jupyter Notebooks Integration
 import os, sys
@@ -94,7 +99,8 @@ def init_django(project_name=None):
 As a result, parameters can be easily tweaked by engineers to improve the training process. For administrators, the lifecycle of the models is even easier. I have automated the training of the ML model using Redis and Celery. Users can easily create new training schedules or manage existing ones using a user-friendly interface. Under the hood, the model will be retrained according to all the parameters set. 
 
 ```
-# Customer Query for training the ML model on data contained in the database
+# Custom Query for training the ML model on data contained in the database
+
 class MlModelQuerySet(models.QuerySet):
     def ml_data(self):
         return self.filter(maturity_date__lt=AVAIALBLE_TRUE_DATA)
@@ -107,6 +113,7 @@ class MlModelManager(models.Manager):
         return self.get_queryset().ml_data()
         
 # Function fro training model
+
 def train_xgboost_model(cv=5, n_iter=50, scoring='recall', verbose=True):
     start_time = datetime.now() 
     qs = load_loan_dataset(verbose=verbose)
@@ -245,8 +252,6 @@ app.conf.beat_schedule = {
 ```
 
 
-![models_admin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/6fda6f22-182e-4378-b97a-e1e3f35037de)
-![Untitled-1](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/fb31ea84-eb64-4db8-82b2-68c9e940ca30)
 ![tasks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/ae2ef222-f064-4289-b681-6203c06ae903)
 ![celery_taks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/2299a154-eafe-44f5-acef-5a6c2fe2d574)
 
