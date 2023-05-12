@@ -1,6 +1,8 @@
 # Introduction
 The Loan Predictor System was designed to assist public credit agents in the process of analyzing and assessing the risk associated with loans secured by the Small Business Association (SBA) of the United States of America. The SBA is a government agency created in 1954 to promote loans and financial support to small businesses by partially securing the funds private banks disburse to these businesses. As one can imagine, the credit agents commissioned with the task of evaluating the risk associated with every single application submitted can easily be overwhelmed by the sheer volume of submissions. From 1986 to 2014, the agency received almost one million submissions. The data associated with the loans disbursed in this time frame can be accessed at https://www.kaggle.com/datasets/mirbektoktogaraev/should-this-loan-be-approved-or-denied where each loan contains twenty-seven (27) different features describing each data point. The purpose of this project is to build a system that employs state-of-the-art machine learning models to automatically classify new loan applications as low- or high-risk. Moreover, the systems should provide the agents with the probability associated with any given loan belonging to any of the mentioned categories (i.e., low- or high-risk). To make the system even more powerful, I have added one more functionality. Once an application is submitted and classified as low risk (only for low-risk loans), the system will create a risk assessment that includes the suggestion of newly optimized parameters for the term (i.e., the period to repay the loan) and amount of money to be disbursed for the requested loan to reduce the risk of the business defaulting. Consequently, the SBA Loan Predictor will allow public credit agents to efficiently manage their time by automatically classifying new applications as low or high risk and focusing their valuable time on assessing those loan applications that will yield the best results for all parties involved. Furthermore, the system tracks new applications and their outcomes or accepts new loan data to periodically retrain the ML model and keep predictions and assessments accurate throughout time. Administrators and credit agents can easily log in or register using the user-friendly forms provided. These forms use the robust authentication systems included in Django to securely allow users to access the systems according to their respective permissions. On the other hand, prospective clients can easily submit new applications through a RESTFUL API and an intuitive user interface.
 
+The process of creating the actual model can be reviewed at: https://www.kaggle.com/code/ricardocolindres/loan-default-prediction-loan-parameter-optimizer
+
 ![signin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/f4948871-023c-4a6c-b36e-887df09d16d6)
 
 # Installation
@@ -65,6 +67,191 @@ Going forward, I will only use the administrator portal as an example. Keep in m
 ![loan_admin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/d37500bc-2ba7-43a2-a7da-a2f65a45c9e1)
 ![loan](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/7322aac0-5dc7-4feb-93b1-8e8b4e880229)
 ![risk_assesmnet](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/2ebef1ae-42a0-410c-981d-c08f9ea40df0)
+
+Moving on, let's explore how I’ve designed the ML lifecycle. Since the ML model is at the core of this application, having a proper way to experiment, reproduce, deploy, and manage the models and components is paramount. Of course, there are many robust open-source platforms out there, such as ML Flow, that can accomplish all these goals. However, my objective was to completely integrate the ML lifecycle workflow into my web applications and customize it according to requirements. Moreover, this allows for very powerful integration of the model into the logic of the application. For example, delivering extra value by not just categorizing loans but also optimizing their parameters. Consequently, the application uses special queries to request data from the database and automatically trains and deploys new models. Also, Jupyter Notebooks are directly integrated into Django and tis easy-to-use ORM (Object Relational Mapper).
+```
+# Jupyter Notebooks Integration
+import os, sys
+PWD = os.path.dirname(os.getcwd())
+
+PROJ_MISSING_MSG = """Set an enviroment variable:\n
+`DJANGO_PROJECT=your_project_name`\n
+or call:\n
+`init_django(your_project_name)`
+"""
+
+def init_django(project_name=None):
+    os.chdir(PWD)
+    project_name = project_name or os.environ.get('DJANGO_PROJECT') or None
+    if project_name == None:
+        raise Exception(PROJ_MISSING_MSG)
+    sys.path.insert(0, PWD)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'{project_name}.settings')
+    os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+    import django
+    django.setup()
+```
+As a result, parameters can be easily tweaked by engineers to improve the training process. For administrators, the lifecycle of the models is even easier. I have automated the training of the ML model using Redis and Celery. Users can easily create new training schedules or manage existing ones using a user-friendly interface. Under the hood, the model will be retrained according to all the parameters set. 
+
+```
+# Customer Query for training the ML model on data contained in the database
+class MlModelQuerySet(models.QuerySet):
+    def ml_data(self):
+        return self.filter(maturity_date__lt=AVAIALBLE_TRUE_DATA)
+    
+class MlModelManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return MlModelQuerySet(self.model, using=self._db)
+    
+    def ml_data(self):
+        return self.get_queryset().ml_data()
+        
+# Function fro training model
+def train_xgboost_model(cv=5, n_iter=50, scoring='recall', verbose=True):
+    start_time = datetime.now() 
+    qs = load_loan_dataset(verbose=verbose)
+    df = prepare_data(qs=qs, verbose=True)
+    X, y = df.drop(['defaulted'], axis= 1), df['defaulted']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
+    bst = xgb.XGBClassifier() 
+    search_space = {
+        'max_depth': Integer(3,10),
+        'min_child_weight': Integer(0, 20),
+        'learning_rate': Real(0.05, 1), 
+        'subsample': Real(0.5, 1.0),
+        'colsample_bytree': Real(0.5, 1.0),
+        'colsample_bylevel': Real(0.5, 1.0),
+        'colsample_bynode' : Real(0.5, 1.0),
+        'alpha': Real(0.0, 10.0),
+        'reg_lambda': Real(0.0, 10.0),
+        'gamma': Real(0.0, 5),
+        }
+    opt = BayesSearchCV(bst, search_space, cv=cv, n_iter=n_iter, scoring='recall')
+    opt.fit(X_train, y_train)
+    if verbose:
+        print(f"Bayes Search was performed successfully")
+    xgb_params = opt.best_params_
+    model = xgb.XGBClassifier(**xgb_params)
+    model.fit(X_train, y_train)
+    if verbose:
+        print(f"Model was trained successfully")
+    y_pred = model.predict(X_test)
+    recall = recall_score(y_pred, y_test, pos_label=1)
+    precision = precision_score(y_pred, y_test, pos_label=1)
+    accuracy = accuracy_score(y_pred, y_test)
+    acc_label = round((100* accuracy),2)
+    today = str(date.today())
+    model_name = f"model-{acc_label}-{today}" 
+    binary_data = pickle.dumps(model)
+    time_elapsed = datetime.now() - start_time
+    obj = Model.objects.create(
+        model_name = model_name,
+        model = binary_data,
+        accuracy = round(accuracy, 2),
+        recall = round(recall, 2),
+        precision = round(precision, 2),
+        train_samples = len(X_train),
+        test_samples = len(X_test),
+        train_time = str(time_elapsed),
+        max_depth = xgb_params['max_depth'],
+        min_child_weight = xgb_params['min_child_weight'],
+        learning_rate = xgb_params['learning_rate'],
+        subsample = xgb_params['subsample'],
+        colsample_bytree = xgb_params['colsample_bytree'],
+        colsample_bylevel = xgb_params['colsample_bylevel'],
+        colsample_bynode = xgb_params['colsample_bynode'],
+        alpha = xgb_params['alpha'],
+        reg_lambda = xgb_params['reg_lambda'],
+        gamma = xgb_params['gamma'],
+    )
+    if verbose:
+        print(f"New model: {model_name}, successfully created")
+        
+
+# Function for optimizing parameters
+
+def optimize_loan_parameters(df:pd.DataFrame, bst: xgb.XGBClassifier):
+    term = df['term'][0]
+    gross_appv = df['gross_appv'][0]
+    loan_class = bst.predict(df)[0]
+    loan_class_prob = bst.predict_proba(df)[0][loan_class]
+    # Adjust second term to expand the testing range
+    gross_margin = gross_appv * 0.20
+    gross_max_limit = gross_appv + gross_margin
+    gross_min_limit = gross_appv - gross_margin
+    # Adjust second term to expand the testing range
+    term_margin = term * 0.3
+    term_max_limit = term+term_margin
+    term_min_limit = term-term_margin
+    # Is term_min_limit is less than a year, 
+    if term_min_limit/12 < 1:
+        term_min_limit = term
+    test_samples = np.linspace(gross_min_limit, gross_max_limit, 10).round(0).astype(int).tolist()
+    # Get gross approved candidate values rounded to the nearest 1000
+    test_samples = [int(round((x/1000),0)*1000) for x in test_samples]
+    term_samples = np.linspace(term_min_limit, term_max_limit, 10).round(0).astype(int).tolist()
+    # Get terms that are only multiples of 12 which mean they are complete years
+    term_samples = list(set([int(round((x/12),0)*12) for x in term_samples]))
+    combinations = [(x,y) for x in test_samples for y in term_samples]
+    num_combinations = [*range(0,len(combinations),1)]
+    samples = dict(zip(num_combinations, combinations))
+    probabilities = []
+    for key in samples:
+        test_frame = df
+        test_frame['gross_appv'] = samples[key][0] 
+        test_frame['term'] = samples[key][1]
+        probabilities.append(bst.predict_proba(test_frame)[0][loan_class])
+    max_prob = max(probabilities)
+    max_prob_index = probabilities.index(max_prob)
+    if max_prob > loan_class_prob:
+        prob_improv = max_prob - loan_class_prob 
+        return (samples[max_prob_index], max_prob, loan_class_prob,prob_improv)
+    else:
+        return None   
+
+
+```
+
+The administrators can easily manage and compare all the models and put the best one into production. All models are saved into a central model registry in PostgreSQL. Finally, there is also another interface to review the results of the tasks automated by Celery. This will let the user know everything about how any given task was executed. For this application, Celery runs model training every 24 hours and checks active loans to decide whether they should be set as inactive based on the conditions we have previously discussed. All the data in PostgreSQL can be easily visualized using PgAdmin.
+
+
+```
+# Celery Schudule
+import os
+from celery import Celery
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'loanpredictor.settings')
+
+app = Celery('loanpredictor')
+app.config_from_object("django.conf:settings", namespace='CELERY')
+
+app.autodiscover_tasks()
+
+app.conf.beat_schedule = {
+    'train_model_24_hours': {
+        'task' : 'train_model',
+        'schedule' : 60 * 30, #30 Mins
+        'kwargs' : {'cv':5, 
+                    'n_iter':1, 
+                    'scoring':'recall', 
+                    'verbose':True}
+    },
+    'update_loan_active_24hours': {
+        'task' : 'update_active_loans',
+        'schedule' : 60 * 45, #45 Mins
+        'kwargs' : {'verbose':True}
+    }
+}
+```
+
+
+![models_admin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/6fda6f22-182e-4378-b97a-e1e3f35037de)
+![Untitled-1](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/fb31ea84-eb64-4db8-82b2-68c9e940ca30)
+![tasks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/ae2ef222-f064-4289-b681-6203c06ae903)
+![celery_taks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/2299a154-eafe-44f5-acef-5a6c2fe2d574)
+
+#Conclusions
+
 
 
 *Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
