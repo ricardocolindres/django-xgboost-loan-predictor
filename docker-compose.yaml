@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15.1-bullseye
+    restart: always
+    ports: 
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=loans
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=admin
+      
+    volumes:
+      - loans:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=ricardocolindres@me.com
+      - PGADMIN_DEFAULT_PASSWORD=123
+      - PGADMIN_LISTEN_PORT=6001
+    ports:
+      - "6001:6001"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+    depends_on:
+      - postgres
+
+    links:
+      - postgres:pgadmin
+
+  redis:
+    image: redis
+    restart: always
+    expose: 
+      - 6380
+    ports:
+      - 6380:6379 # redis://localhost:6380
+    volumes:
+      - redis_data:/data
+    entrypoint: redis-server --appendonly yes
+
+volumes: 
+  redis_data:
+  loans:
+  pgadmin:

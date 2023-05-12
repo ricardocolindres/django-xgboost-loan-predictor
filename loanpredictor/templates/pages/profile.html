@@ -1,0 +1,76 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid">
+      <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('{% static 'img/curved-images/curved0.jpg' %}'); background-position-y: 50%;">
+      </div>
+      <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+        <div class="row gx-4">
+          <div class="col-auto">
+            <div class="avatar avatar-xl position-relative">
+              <img src="{% static 'img/bruce-mars.jpg' %}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            </div>
+          </div>
+          <div class="col-auto my-auto">
+            <div class="h-100">
+              <h5 class="mb-1">
+                {{ user.get_full_name }}
+              </h5>
+              <p class="mb-0 font-weight-bold text-sm">
+                Credit Agent
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+            <div class="nav-wrapper position-relative end-0">
+              <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid py-4">
+      <div class="row">
+        
+        <div class="w-100 mx-auto">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="row">
+                <div class="col-md-8 d-flex align-items-center">
+                  <h6 class="mb-0">Profile Information</h6>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              <p class="text-sm">
+                Hello, {{ user.get_full_name }}.Welcome the SBA Loan Predictor! If you still can’t access loan applications, 
+                don’t worry. You are a couple steps away from making use of this awesome tool!  Please contact your administrator at admin@sbaloanpredictor.com 
+                (fictional email) with your username, email, and employee badge number to activate your account. 
+                Once your account has been activated, you will have access to all loan applications that come 
+                through the official SBA website. The system is designed to aid you in the process of analyzing 
+                and assessing the risk associated with loans secured by the Small Business Association of 
+                the United States of America Government. The system employs a state-of-the-art machine learning 
+                model to classify new loan applications as low or high risk. Moreover, it provides the probability 
+                that the loan belongs to any of the mentioned categories. Finally, it also suggests the agent 
+                new optimized term (i.e., the period of time to repay the loan) and gross amount disbursed based 
+                on the ones contained in the submitted application to reduce the risk associated with defaulting 
+                on the given loan. Please refer to the documentation provided by your administrator 
+                before creating or modifying new applications/loans.
+              </p>
+              <hr class="horizontal gray-light my-4">
+              <ul class="list-group">
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div>      
+    </div>
+  </div>
+
+{% endblock content %}
