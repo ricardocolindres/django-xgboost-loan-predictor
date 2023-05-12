@@ -51,7 +51,7 @@ As previously discussed, the main purpose of this application is to assist publi
 
 ![model_diagram](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/72ade4ba-fa26-483c-8331-d448d43668bf)
 
-#The User Interface
+# The User Interface
 In the following section, I will quickly guide you through the interface and what is going on under the hood. When a staff member or administrator visits the home page, they will be greeted with the following page: 
 
 ![home](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/5e8689a5-3e8b-4c8d-b734-c35df7b1aa71)
