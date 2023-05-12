@@ -39,7 +39,7 @@ celery -A loanpredictor worker -l info --beat
 ``` 
 9.	Run Django Server
 ```
-# Make migrations
+# Run Django Server
 python manage.py runserver
 ```
 10.	Log in into the administrator account using the super user you just created. Finally, create a group for credit agents and permissions to modify and create all the loans and risk assessments tables. You are all set!  
