@@ -49,6 +49,17 @@ As previously discussed, the main purpose of this application is to assist publi
 
 ![model_diagram](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/72ade4ba-fa26-483c-8331-d448d43668bf)
 
+#The User Interface
+In the following section, I will quickly guide you through the interface and what is going on under the hood. When a staff member or administrator visits the home page, they will be greeted with the following page: 
+
+![home](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/5e8689a5-3e8b-4c8d-b734-c35df7b1aa71)
+
+From this point, the staff and administrator can use the sign-in and registration forms to access all the application’s features. Under the hood, the powerful Django authentication system has been used. All newly registered users will have no permissions set by default; therefore, they won’t be able to see anything but their profile. The administrators can change these permissions. If a user is a credit agent, it should be added to the credit agent group created at installation, which gives permissions for modifying the loan and risk assessment. Of course, a new administrator can be added similarly.
+
+![signin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/756a7b42-a25e-4310-afb2-65346dd691dd)
+![register](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/085c5784-72a2-4912-9af9-72bf129e2246)
+![agent_profile](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/a775f214-cba2-4331-a0c8-b5996ae80c56)
+
 
 *Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
 
