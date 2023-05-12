@@ -21,12 +21,13 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 6.	Assuming you have Docker Container installed on your computer, please run the docker-compose file. Doing so will start the following services: redis, PostgreSQL, and PgAdmin (database interface). Please keep in mind that redis will be later communicating with Celery to automate some tasks. Celcery has dropped support for Windows, so, if you are using a PC, will need to run your code within a virtual environment. Please refer to this article if you need help doing this: https://www.codedisciples.in/celery-windows.html  
 7.	All the settings for these docker containers should match with the ones in the settings.py file. However, if you decide to change some of the settings in the docker-compose file, don’t forget to update them in your settings.py file. Now you can run the following commands in your terminal (your virtual environment should be activated, and you should be inside the loanpredictor directory). Run each command at a time. 
 ```
+# Make migrations
 python manage.py makemigrations
-
+# Migrate to database
 python manage.py migrate
-
+# Cold Start. Load initial data
 python manage.py loader --verbose --show-total
-
+#Create Super User, Follow Instructions. 
 python manage.py createsuperuser
 
 ```
