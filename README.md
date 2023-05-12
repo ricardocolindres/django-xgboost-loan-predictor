@@ -18,3 +18,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 ```
 5.	Before the server and other services run, we’ve got to modify some files. This project was built using the open-source templates created by Creative Tim at https://github.com/app-generator/django-admin-soft-dashboard. These templates were adapted to fit the purpose of this particular project; thus, some changes have been made to this library. When you created your virtual environment, the following package should have been installed: django-admin-soft-dashboard==1.0.12. This package should live within the directory that contains your virtual environment. In Windows, it should look something like this: C:\Users\YourUser\.virtualenvs\YourVirtualEnviorment\Lib\site-packages\admin_soft. Once you have accessed the directory, please replace the files forms.py and urls.py with the ones contained in the repository in the data folder within the loanpredictor directory. You can certainly add the admin_soft folder as an independent app directly into the Django project; however, this will require additional configurations that, in this case, are not worth the time since the changes are so little. As you can see, the static and template folders, which were originally contained in this same package’s directory, were copied to the main project’s directory. The files here were heavily modified; thus, having them here makes sense. 
+6.	Assuming you have Docker Container installed on your computer, please run the docker-compose file. Doing so will start the following services: redis, PostgreSQL, and PgAdmin (database interface). Please keep in mind that redis will be later communicating with Celery to automate some tasks. Celcery has dropped support for Windows, so, if you are using a PC, will need to run your code within a virtual environment. Please refer to this article if you need help doing this: https://www.codedisciples.in/celery-windows.html  
+7.	All the settings for these docker containers should match with the ones in the settings.py file. However, if you decide to change some of the settings in the docker-compose file, don’t forget to update them in your settings.py file. Now you can run the following commands in your terminal (your virtual environment should be activated, and you should be inside the loanpredictor directory). Run each command at a time. 
+```
+python manage.py makemigrations
+
+python manage.py migrate
+
+python manage.py loader --verbose --show-total
+
+python manage.py createsuperuser
+
+```
