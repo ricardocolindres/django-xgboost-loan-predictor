@@ -3,3 +3,15 @@ The Loan Predictor System was designed to assist public credit agents in the pro
 
 ![signin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/f4948871-023c-4a6c-b36e-887df09d16d6)
 
+1.	Clone the repository to your preferred location. 
+2.	Create a new virtual environment using the requirements contained in the requirements.txt file. I personally like using pipenv so you will also find a Pipifile in the repository. You could also use this file to load your virtual environment. Once your virtual environment is ready, please activate it in your favorite IDE, for me, this is VS code. 
+3.	Download the “cold_start.csv” file from the following link: https://www.dropbox.com/s/d7unt2wqm7qluof/cold_load.csv?dl=0
+4.	This CSV file contains all loans the SBA has disbursed from 1986 to 2014. The data has been cleaned and prepared for the ML Model the system will be running. This file MUST be placed on the data folder contained within the loanpredictor directory unless you change the DATA_DIR variable in the settings.py file to declare a new path for the data. As the name suggests, “cold start”, this data is essential to initiate the system. 
+
+```
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cold start data path
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+```
