@@ -3,6 +3,8 @@ The Loan Predictor System was designed to assist public credit agents in the pro
 
 ![signin](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/f4948871-023c-4a6c-b36e-887df09d16d6)
 
+# Installation
+
 1.	Clone the repository to your preferred location. 
 2.	Create a new virtual environment using the requirements contained in the requirements.txt file. I personally like using pipenv so you will also find a Pipifile in the repository. You could also use this file to load your virtual environment. Once your virtual environment is ready, please activate it in your favorite IDE, for me, this is VS code. 
 3.	Download the “cold_start.csv” file from the following link: https://www.dropbox.com/s/d7unt2wqm7qluof/cold_load.csv?dl=0
@@ -15,3 +17,4 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Cold start data path
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 ```
+5.	Before the server and other services run, we’ve got to modify some files. This project was built using the open-source templates created by Creative Tim at https://github.com/app-generator/django-admin-soft-dashboard. These templates were adapted to fit the purpose of this particular project; thus, some changes have been made to this library. When you created your virtual environment, the following package should have been installed: django-admin-soft-dashboard==1.0.12. This package should live within the directory that contains your virtual environment. In Windows, it should look something like this: C:\Users\YourUser\.virtualenvs\YourVirtualEnviorment\Lib\site-packages\admin_soft. Once you have accessed the directory, please replace the files forms.py and urls.py with the ones contained in the repository in the data folder within the loanpredictor directory. You can certainly add the admin_soft folder as an independent app directly into the Django project; however, this will require additional configurations that, in this case, are not worth the time since the changes are so little. As you can see, the static and template folders, which were originally contained in this same package’s directory, were copied to the main project’s directory. The files here were heavily modified; thus, having them here makes sense. 
