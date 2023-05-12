@@ -49,3 +49,6 @@ As previously discussed, the main purpose of this application is to assist publi
 
 ![model_diagram](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/72ade4ba-fa26-483c-8331-d448d43668bf)
 
+
+*Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
+
