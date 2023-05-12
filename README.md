@@ -42,7 +42,7 @@ celery -A loanpredictor worker -l info --beat
 # Run Django server
 python manage.py runserver
 ```
-10.	Log in into the administrator account using the super user you just created. Finally, create a group for credit agents and permissions to modify and create all the loans and risk assessments tables. You are all set!  
+10.	Log in into the administrator account using the super user you just created. Finally, create a group for credit agents with permissions to modify and create all the loans and risk assessments tables. You are all set!  
 
 # The Application
 ![model_diagram](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/72ade4ba-fa26-483c-8331-d448d43668bf)
