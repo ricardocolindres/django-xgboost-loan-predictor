@@ -31,3 +31,15 @@ python manage.py loader --verbose --show-total
 python manage.py createsuperuser
 
 ```
+8.	Now, we can start the celery workers. If you would like to adjust the schedule in which the task will be run, please do so in the celery.py file.
+```
+# Start Workers and Beat schedule
+celery -A loanpredictor worker -l info --beat
+
+``` 
+9.	Run Django Server
+```
+# Make migrations
+python manage.py runserver
+```
+10.	Log in into the administrator account using the super user you just created. Finally, create a group for credit agents and permissions to modify and create all the loans and risk assessments tables. You are all set!  
