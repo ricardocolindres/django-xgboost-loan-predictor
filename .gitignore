@@ -3,6 +3,6 @@ loanpredictor/data/SBAnational.csv
 loanpredictor/data/inflation.csv
 loanpredictor/data/unemployment.csv
 loanpredictor/data/zips.csv
-loanpredictor/data/loan_predictor.json
+loanpredictor/data/loan-predictor.json
 loanpredictor/data/cleaned_sba.csv
 loanpredictor/data/cold_load.csv
