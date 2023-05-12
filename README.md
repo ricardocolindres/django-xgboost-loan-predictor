@@ -255,8 +255,10 @@ app.conf.beat_schedule = {
 ![tasks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/ae2ef222-f064-4289-b681-6203c06ae903)
 ![celery_taks](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/2299a154-eafe-44f5-acef-5a6c2fe2d574)
 
-#Conclusions
+Finally, let’s explore how clients submit applications. Different endpoints have been defined to communicate with the server through a RESTFUL API, specifically the Django Rest Framework. For submitting a new loan application, a client can visit the endpoint /ebanking/apply. This endpoint only allows post requests. In this case, I do not want to expose the risk assessment to clients; therefore, I do not return any probabilities, assessments, or data at all. However, serialized information about the loans can be accessed at the endpoint /ebanking/loan and ebanking/loan/<int:id>. I set these endpoints up just in case some sort of front-end service would be preferred for credit agents. 
 
+![application](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/99ad258e-69c2-4ea1-a24c-512d79aa7381)
+![API](https://github.com/ricardocolindres/django-xgboost-loan-predictor/assets/83890387/405df8e8-ae6d-4f9a-8b39-b9182cd41b91)
 
 
 *Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
