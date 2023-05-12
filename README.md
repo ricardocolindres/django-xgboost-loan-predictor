@@ -263,3 +263,5 @@ Finally, let’s explore how clients submit applications. Different endpoints ha
 
 *Disclosure: This project HAS NOT BEEN COMMISIONED by the Small Business Association (SBA) of the United States of America. It is an independent project built using a publicly available real dataset containing all the loans this agency has disbursed from 1886 to 2014. 
 
+FOR MORE INFORMATION OR HELP PLEASE CONTACT ME AT RICARDOCOLINDRES@ME.com
+
